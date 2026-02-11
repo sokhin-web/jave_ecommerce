@@ -31,11 +31,11 @@ public class ClientApp extends Application {
     public void start(Stage primaryStage) {
         try {
             dataStore = DataStore.getInstance();
-            
+
             // Get the current logged-in user or use default
             User currentUser = ApplicationState.getCurrentUser();
             int userId = (currentUser != null) ? currentUser.getId() : 3;
-            
+
             // Create or get active cart for current user
             userCart = getOrCreateUserCart(userId);
 
@@ -111,7 +111,7 @@ public class ClientApp extends Application {
         cartButton.setOnAction(e -> showCartView());
 
         // Settings button
-        Button settingsBtn = new Button("⚙️ Settings");
+        Button settingsBtn = new Button("👤 Profile");
         settingsBtn.setFont(Font.font("Arial", FontWeight.BOLD, 14));
         settingsBtn.setStyle("-fx-background-color: white; -fx-text-fill: #4FB3E8; " +
                 "-fx-background-radius: 20; -fx-padding: 10 20 10 20; -fx-cursor: hand;");
@@ -119,7 +119,7 @@ public class ClientApp extends Application {
                 "-fx-text-fill: #4FB3E8; -fx-background-radius: 20; -fx-padding: 10 20 10 20; -fx-cursor: hand;"));
         settingsBtn.setOnMouseExited(e -> settingsBtn.setStyle("-fx-background-color: white; " +
                 "-fx-text-fill: #4FB3E8; -fx-background-radius: 20; -fx-padding: 10 20 10 20; -fx-cursor: hand;"));
-        settingsBtn.setOnAction(e -> showClientSettings());
+        settingsBtn.setOnAction(e -> showClientProfile());
 
         // Logout button
         Button logoutBtn = new Button("🚪 Logout");
@@ -178,7 +178,7 @@ public class ClientApp extends Application {
         btn.setAlignment(Pos.CENTER_LEFT);
         btn.setPadding(new Insets(15, 20, 15, 20));
         btn.setFont(Font.font("Arial", FontWeight.SEMI_BOLD, 14));
-        
+
         if (isSelected) {
             btn.setStyle("-fx-background-color: #4FB3E8; -fx-text-fill: white; " +
                     "-fx-background-radius: 8; -fx-cursor: hand;");
@@ -262,7 +262,7 @@ public class ClientApp extends Application {
 
     private ArrayList<Product> filterProducts(Category category, String searchQuery) {
         ArrayList<Product> products = dataStore.getProducts();
-        
+
         // Filter by category
         if (category != null) {
             products = products.stream()
@@ -399,7 +399,7 @@ public class ClientApp extends Application {
                 "-fx-background-radius: 20; -fx-cursor: hand;");
 
         // Quantity control logic
-        final int[] quantity = {1};
+        final int[] quantity = { 1 };
         minusBtn.setOnAction(e -> {
             if (quantity[0] > 1) {
                 quantity[0]--;
@@ -448,7 +448,7 @@ public class ClientApp extends Application {
 
         dialog.showAndWait().ifPresent(qty -> {
             addToCart(product, qty);
-            showSuccessAlert("Product added to cart successfully!", 
+            showSuccessAlert("Product added to cart successfully!",
                     String.format("Added %d x %s to your cart", qty, product.getName()));
         });
     }
@@ -457,7 +457,7 @@ public class ClientApp extends Application {
         // Check if product already exists in cart
         ArrayList<CartItem> existingItems = dataStore.getCartItemsByCartId(userCart.getId());
         CartItem existingItem = null;
-        
+
         for (CartItem item : existingItems) {
             if (item.getProductId() == product.getId()) {
                 existingItem = item;
@@ -533,7 +533,7 @@ public class ClientApp extends Application {
 
         ButtonType checkoutButtonType = new ButtonType("Checkout", ButtonBar.ButtonData.OK_DONE);
         ButtonType closeButtonType = new ButtonType("Close", ButtonBar.ButtonData.CANCEL_CLOSE);
-        
+
         if (cartItems.isEmpty()) {
             dialog.getDialogPane().getButtonTypes().add(closeButtonType);
         } else {
@@ -599,9 +599,9 @@ public class ClientApp extends Application {
 
     private void checkout() {
         userCart.setStatus("Completed");
-        showSuccessAlert("Order Completed!", 
+        showSuccessAlert("Order Completed!",
                 String.format("Your order has been placed successfully!\nTotal: $%.2f", userCart.getTotalPrice()));
-        
+
         // Create new cart for user
         userCart = new Cart(userCart.getUserId(), "Active");
         dataStore.addCart(userCart);
@@ -615,51 +615,283 @@ public class ClientApp extends Application {
         alert.showAndWait();
     }
 
-    private void showClientSettings() {
+    private void showClientProfile() {
         Dialog<Void> dialog = new Dialog<>();
-        dialog.setTitle("User Settings");
+        dialog.setTitle("User Profile");
         dialog.setHeaderText(null);
 
-        VBox content = new VBox(20);
-        content.setPadding(new Insets(25));
-        content.setPrefWidth(500);
+        VBox content = new VBox(25);
+        content.setPadding(new Insets(30));
+        content.setPrefWidth(550);
+        content.setStyle("-fx-background-color: white;");
 
         User currentUser = ApplicationState.getCurrentUser();
 
         if (currentUser != null) {
-            Label userInfoTitle = new Label("User Information");
-            userInfoTitle.setFont(Font.font("Arial", FontWeight.BOLD, 18));
-
-            GridPane userGrid = new GridPane();
-            userGrid.setHgap(20);
-            userGrid.setVgap(15);
-            userGrid.setPadding(new Insets(20));
-            userGrid.setStyle("-fx-background-color: #f9f9f9; -fx-background-radius: 8;");
+            // Simplified Profile Header
+            VBox headerBox = new VBox(12);
+            headerBox.setAlignment(Pos.CENTER);
+            headerBox.setPadding(new Insets(15, 0, 15, 0));
+            headerBox.setStyle("-fx-background-color: #4FB3E8; -fx-background-radius: 12;");
 
             Label userIconLabel = new Label(currentUser.getImage());
-            userIconLabel.setFont(Font.font(48));
-            GridPane.setRowSpan(userIconLabel, 4);
+            userIconLabel.setFont(Font.font(70));
 
-            userGrid.add(userIconLabel, 0, 0);
-            userGrid.add(new Label("Name:"), 1, 0);
-            userGrid.add(new Label(currentUser.getFullName()), 2, 0);
-            userGrid.add(new Label("Email:"), 1, 1);
-            userGrid.add(new Label(currentUser.getEmail()), 2, 1);
-            userGrid.add(new Label("Phone:"), 1, 2);
-            userGrid.add(new Label(currentUser.getPhone()), 2, 2);
-            userGrid.add(new Label("Address:"), 1, 3);
-            userGrid.add(new Label(currentUser.getAddress()), 2, 3);
+            Label nameLabel = new Label(currentUser.getFullName());
+            nameLabel.setFont(Font.font("Arial", FontWeight.BOLD, 24));
+            nameLabel.setTextFill(Color.WHITE);
 
-            content.getChildren().addAll(userInfoTitle, userGrid);
+            Label roleLabel = new Label(currentUser.getPosition());
+            roleLabel.setFont(Font.font("Arial", FontWeight.NORMAL, 14));
+            roleLabel.setTextFill(Color.web("#E3F2FD"));
+
+            headerBox.getChildren().addAll(userIconLabel, nameLabel, roleLabel);
+
+            // Profile Details Section
+            VBox detailsSection = new VBox(15);
+            detailsSection.setPadding(new Insets(20));
+
+            Label detailsTitle = new Label("Account Information");
+            detailsTitle.setFont(Font.font("Arial", FontWeight.BOLD, 18));
+            detailsTitle.setTextFill(Color.web("#333333"));
+
+            // Info Cards
+            VBox infoCards = new VBox(12);
+
+            infoCards.getChildren().addAll(
+                    createInfoCard("📧", "Email", currentUser.getEmail()),
+                    createInfoCard("📱", "Phone", currentUser.getPhone()),
+                    createInfoCard("🏠", "Address", currentUser.getAddress()),
+                    createInfoCard("🆔", "User ID", String.valueOf(currentUser.getId())));
+
+            detailsSection.getChildren().addAll(detailsTitle, new Separator(), infoCards);
+
+            // Single Action Button (Order History only)
+            HBox actionButtons = new HBox(15);
+            actionButtons.setAlignment(Pos.CENTER);
+            actionButtons.setPadding(new Insets(20, 0, 10, 0));
+
+            Button orderHistoryBtn = new Button("📦 Order History");
+            orderHistoryBtn.setFont(Font.font("Arial", FontWeight.BOLD, 14));
+            orderHistoryBtn.setStyle("-fx-background-color: #4FB3E8; -fx-text-fill: white; " +
+                    "-fx-background-radius: 20; -fx-padding: 12 30 12 30; -fx-cursor: hand;");
+            orderHistoryBtn.setOnMouseEntered(e -> orderHistoryBtn.setStyle(
+                    "-fx-background-color: #3A9BD4; -fx-text-fill: white; " +
+                            "-fx-background-radius: 20; -fx-padding: 12 30 12 30; -fx-cursor: hand;"));
+            orderHistoryBtn.setOnMouseExited(e -> orderHistoryBtn.setStyle(
+                    "-fx-background-color: #4FB3E8; -fx-text-fill: white; " +
+                            "-fx-background-radius: 20; -fx-padding: 12 30 12 30; -fx-cursor: hand;"));
+            orderHistoryBtn.setOnAction(e -> {
+                dialog.close();
+                showOrderHistory();
+            });
+
+            actionButtons.getChildren().add(orderHistoryBtn);
+
+            content.getChildren().addAll(headerBox, detailsSection, actionButtons);
         } else {
-            Label info = new Label("No user logged in");
-            info.setFont(Font.font("Arial", 14));
-            content.getChildren().add(info);
+            // No user logged in state
+            VBox emptyState = new VBox(20);
+            emptyState.setAlignment(Pos.CENTER);
+            emptyState.setPadding(new Insets(40));
+
+            Label emptyIcon = new Label("👤");
+            emptyIcon.setFont(Font.font(80));
+            emptyIcon.setTextFill(Color.GRAY);
+
+            Label emptyMessage = new Label("No user logged in");
+            emptyMessage.setFont(Font.font("Arial", FontWeight.BOLD, 18));
+            emptyMessage.setTextFill(Color.GRAY);
+
+            Label emptyHint = new Label("Please log in to view your profile");
+            emptyHint.setFont(Font.font("Arial", FontWeight.NORMAL, 14));
+            emptyHint.setTextFill(Color.web("#999999"));
+
+            emptyState.getChildren().addAll(emptyIcon, emptyMessage, emptyHint);
+            content.getChildren().add(emptyState);
+        }
+
+        dialog.getDialogPane().setContent(content);
+
+        ButtonType closeButtonType = new ButtonType("Close", ButtonBar.ButtonData.CANCEL_CLOSE);
+        dialog.getDialogPane().getButtonTypes().add(closeButtonType);
+
+        // Style the close button
+        Button closeButton = (Button) dialog.getDialogPane().lookupButton(closeButtonType);
+        closeButton.setStyle("-fx-font-size: 14; -fx-padding: 8 20 8 20;");
+
+        dialog.showAndWait();
+    }
+
+    private HBox createInfoCard(String icon, String label, String value) {
+        HBox card = new HBox(15);
+        card.setAlignment(Pos.CENTER_LEFT);
+        card.setPadding(new Insets(15));
+        card.setStyle("-fx-background-color: #f8f9fa; -fx-background-radius: 10; " +
+                "-fx-border-color: #e9ecef; -fx-border-radius: 10; -fx-border-width: 1;");
+
+        // Icon
+        Label iconLabel = new Label(icon);
+        iconLabel.setFont(Font.font(28));
+        iconLabel.setPrefWidth(40);
+        iconLabel.setAlignment(Pos.CENTER);
+
+        // Text content
+        VBox textBox = new VBox(5);
+
+        Label labelText = new Label(label);
+        labelText.setFont(Font.font("Arial", FontWeight.SEMI_BOLD, 12));
+        labelText.setTextFill(Color.web("#6c757d"));
+
+        Label valueText = new Label(value);
+        valueText.setFont(Font.font("Arial", FontWeight.NORMAL, 15));
+        valueText.setTextFill(Color.web("#212529"));
+        valueText.setWrapText(true);
+        valueText.setMaxWidth(400);
+
+        textBox.getChildren().addAll(labelText, valueText);
+
+        card.getChildren().addAll(iconLabel, textBox);
+
+        // Hover effect
+        card.setOnMouseEntered(e -> card.setStyle(
+                "-fx-background-color: #ffffff; -fx-background-radius: 10; " +
+                        "-fx-border-color: #4FB3E8; -fx-border-radius: 10; -fx-border-width: 1; " +
+                        "-fx-effect: dropshadow(gaussian, rgba(79,179,232,0.3), 8, 0, 0, 2);"));
+        card.setOnMouseExited(e -> card.setStyle(
+                "-fx-background-color: #f8f9fa; -fx-background-radius: 10; " +
+                        "-fx-border-color: #e9ecef; -fx-border-radius: 10; -fx-border-width: 1;"));
+
+        return card;
+    }
+
+    private void showOrderHistory() {
+        Dialog<Void> dialog = new Dialog<>();
+        dialog.setTitle("Order History");
+        dialog.setHeaderText(null);
+
+        VBox content = new VBox(20);
+        content.setPadding(new Insets(25));
+        content.setPrefWidth(650);
+
+        Label title = new Label("📦 Your Order History");
+        title.setFont(Font.font("Arial", FontWeight.BOLD, 24));
+
+        User currentUser = ApplicationState.getCurrentUser();
+        if (currentUser != null) {
+            // Get completed carts for current user
+            ArrayList<Cart> completedCarts = new ArrayList<>();
+            for (Cart cart : dataStore.getCarts()) {
+                if (cart.getUserId() == currentUser.getId() && cart.getStatus().equals("Completed")) {
+                    completedCarts.add(cart);
+                }
+            }
+
+            if (completedCarts.isEmpty()) {
+                VBox emptyState = new VBox(15);
+                emptyState.setAlignment(Pos.CENTER);
+                emptyState.setPadding(new Insets(40));
+
+                Label emptyIcon = new Label("📦");
+                emptyIcon.setFont(Font.font(60));
+                emptyIcon.setTextFill(Color.GRAY);
+
+                Label emptyMessage = new Label("No orders yet");
+                emptyMessage.setFont(Font.font("Arial", FontWeight.BOLD, 18));
+                emptyMessage.setTextFill(Color.GRAY);
+
+                Label emptyHint = new Label("Your completed orders will appear here");
+                emptyHint.setFont(Font.font("Arial", FontWeight.NORMAL, 14));
+                emptyHint.setTextFill(Color.web("#999999"));
+
+                emptyState.getChildren().addAll(emptyIcon, emptyMessage, emptyHint);
+                content.getChildren().addAll(title, new Separator(), emptyState);
+            } else {
+                VBox ordersList = new VBox(15);
+
+                for (Cart cart : completedCarts) {
+                    VBox orderCard = createOrderCard(cart);
+                    ordersList.getChildren().add(orderCard);
+                }
+
+                ScrollPane scrollPane = new ScrollPane(ordersList);
+                scrollPane.setFitToWidth(true);
+                scrollPane.setPrefHeight(400);
+                scrollPane.setStyle("-fx-background-color: transparent;");
+
+                content.getChildren().addAll(title, new Separator(), scrollPane);
+            }
+        } else {
+            Label noUserLabel = new Label("Please log in to view order history");
+            noUserLabel.setFont(Font.font("Arial", FontWeight.NORMAL, 16));
+            noUserLabel.setTextFill(Color.GRAY);
+            content.getChildren().addAll(title, new Separator(), noUserLabel);
         }
 
         dialog.getDialogPane().setContent(content);
         dialog.getDialogPane().getButtonTypes().add(ButtonType.CLOSE);
         dialog.showAndWait();
+    }
+
+    private VBox createOrderCard(Cart cart) {
+        VBox card = new VBox(10);
+        card.setPadding(new Insets(20));
+        card.setStyle("-fx-background-color: white; -fx-background-radius: 10; " +
+                "-fx-border-color: #e0e0e0; -fx-border-radius: 10; -fx-border-width: 1; " +
+                "-fx-effect: dropshadow(gaussian, rgba(0,0,0,0.05), 5, 0, 0, 2);");
+
+        // Order header
+        HBox header = new HBox(15);
+        header.setAlignment(Pos.CENTER_LEFT);
+
+        Label orderIdLabel = new Label("Order #" + cart.getId());
+        orderIdLabel.setFont(Font.font("Arial", FontWeight.BOLD, 16));
+
+        Region spacer = new Region();
+        HBox.setHgrow(spacer, Priority.ALWAYS);
+
+        Label totalLabel = new Label(String.format("$%.2f", cart.getTotalPrice()));
+        totalLabel.setFont(Font.font("Arial", FontWeight.BOLD, 18));
+        totalLabel.setTextFill(Color.web("#4FB3E8"));
+
+        header.getChildren().addAll(orderIdLabel, spacer, totalLabel);
+
+        // Order items
+        ArrayList<CartItem> items = dataStore.getCartItemsByCartId(cart.getId());
+        VBox itemsList = new VBox(5);
+
+        for (CartItem item : items) {
+            Product product = dataStore.getProductById(item.getProductId());
+            if (product != null) {
+                HBox itemRow = new HBox(10);
+                itemRow.setAlignment(Pos.CENTER_LEFT);
+                itemRow.setPadding(new Insets(5, 0, 5, 10));
+
+                Label itemLabel = new Label(String.format("%s %s × %d",
+                        product.getImage(), product.getName(), item.getQuantity()));
+                itemLabel.setFont(Font.font("Arial", FontWeight.NORMAL, 13));
+
+                Region itemSpacer = new Region();
+                HBox.setHgrow(itemSpacer, Priority.ALWAYS);
+
+                Label itemPrice = new Label(String.format("$%.2f", item.getTotal()));
+                itemPrice.setFont(Font.font("Arial", FontWeight.SEMI_BOLD, 13));
+                itemPrice.setTextFill(Color.web("#666666"));
+
+                itemRow.getChildren().addAll(itemLabel, itemSpacer, itemPrice);
+                itemsList.getChildren().add(itemRow);
+            }
+        }
+
+        // Status badge
+        Label statusLabel = new Label("✓ Completed");
+        statusLabel.setFont(Font.font("Arial", FontWeight.BOLD, 12));
+        statusLabel.setTextFill(Color.web("#2E7D32"));
+        statusLabel.setStyle("-fx-background-color: #E8F5E9; -fx-background-radius: 12; " +
+                "-fx-padding: 5 12 5 12;");
+
+        card.getChildren().addAll(header, new Separator(), itemsList, statusLabel);
+        return card;
     }
 
     private void handleClientLogout() {
