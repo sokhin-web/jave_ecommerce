@@ -1,8 +1,13 @@
-D:\Project_Learning\javafx-admin-panel\src\main\java\com\adminpanel\Cart.java
-D:\Project_Learning\javafx-admin-panel\src\main\java\com\adminpanel\Product.java
-D:\Project_Learning\javafx-admin-panel\src\main\java\com\adminpanel\CartItem.java
-D:\Project_Learning\javafx-admin-panel\src\main\java\com\adminpanel\DashboardApp.java
-D:\Project_Learning\javafx-admin-panel\src\main\java\com\adminpanel\Category.java
-D:\Project_Learning\javafx-admin-panel\src\main\java\com\adminpanel\ClientApp.java
-D:\Project_Learning\javafx-admin-panel\src\main\java\com\adminpanel\DataStore.java
-D:\Project_Learning\javafx-admin-panel\src\main\java\com\adminpanel\User.java
+C:\Users\MSI PC\jave_ecommerce\src\main\java\com\adminpanel\auth\LoginApp.java
+C:\Users\MSI PC\jave_ecommerce\src\main\java\com\adminpanel\store\DataStore.java
+C:\Users\MSI PC\jave_ecommerce\src\main\java\com\adminpanel\ClientApp.java
+C:\Users\MSI PC\jave_ecommerce\src\main\java\com\adminpanel\model\User.java
+C:\Users\MSI PC\jave_ecommerce\src\main\java\com\adminpanel\ui\ClientApp.java
+C:\Users\MSI PC\jave_ecommerce\src\main\java\com\adminpanel\ui\DashboardApp.java
+C:\Users\MSI PC\jave_ecommerce\src\main\java\com\adminpanel\model\CartItem.java
+C:\Users\MSI PC\jave_ecommerce\src\main\java\com\adminpanel\model\Category.java
+C:\Users\MSI PC\jave_ecommerce\src\main\java\com\adminpanel\util\PasswordUtils.java
+C:\Users\MSI PC\jave_ecommerce\src\main\java\com\adminpanel\model\Product.java
+C:\Users\MSI PC\jave_ecommerce\src\main\java\com\adminpanel\util\ApplicationState.java
+C:\Users\MSI PC\jave_ecommerce\src\main\java\com\adminpanel\model\Cart.java
+C:\Users\MSI PC\jave_ecommerce\src\main\java\com\adminpanel\DashboardApp.java
