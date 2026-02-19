@@ -1,11 +1,16 @@
 package com.adminpanel.ui;
 
+import com.adminpanel.model.Cart;
 import com.adminpanel.model.Category;
+import com.adminpanel.model.Product;
 import com.adminpanel.model.User;
+import com.adminpanel.store.DataStore;
+import com.adminpanel.model.CartItem;
 import com.adminpanel.ui.client.*;
 import com.adminpanel.util.ApplicationState;
-
+import java.util.ArrayList;
 import javafx.application.Application;
+import javafx.collections.ObservableList;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
@@ -22,6 +27,7 @@ public class ClientApp extends Application {
     private Category selectedCategory = null;
     private int userId;
     private ProductGridView productGridView;
+    private DataStore dataStore = DataStore.getInstance();
 
     @Override
     public void start(Stage primaryStage) {
@@ -143,7 +149,7 @@ public class ClientApp extends Application {
         header.getChildren().addAll(orderIdLabel, spacer, totalLabel);
 
         // Order items
-        ArrayList<CartItem> items = dataStore.getCartItemsByCartId(cart.getId());
+        ObservableList<CartItem> items = dataStore.getCartItemsByCartId(cart.getId());
         VBox itemsList = new VBox(5);
 
         for (CartItem item : items) {
