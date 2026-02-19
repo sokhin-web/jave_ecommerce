@@ -1,23 +1,26 @@
 package com.adminpanel.store;
 
 import java.util.ArrayList;
+import java.util.List;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import com.adminpanel.model.*;
 
 public class DataStore {
     private static DataStore instance;
     
-    private ArrayList<User> users;
-    private ArrayList<Category> categories;
-    private ArrayList<Product> products;
-    private ArrayList<Cart> carts;
-    private ArrayList<CartItem> cartItems;
+    private ObservableList<User> users;
+    private ObservableList<Category> categories;
+    private ObservableList<Product> products;
+    private ObservableList<Cart> carts;
+    private ObservableList<CartItem> cartItems;
 
     private DataStore() {
-        users = new ArrayList<>();
-        categories = new ArrayList<>();
-        products = new ArrayList<>();
-        carts = new ArrayList<>();
-        cartItems = new ArrayList<>();
+        users = FXCollections.observableArrayList();
+        categories = FXCollections.observableArrayList();
+        products = FXCollections.observableArrayList();
+        carts = FXCollections.observableArrayList();
+        cartItems = FXCollections.observableArrayList();
         initializeSampleData();
     }
 
@@ -31,15 +34,15 @@ public class DataStore {
     private void initializeSampleData() {
         // Add sample users
         users.add(new User("Jonh", "Vist", "example56@gamil.com", "password123", 
-                          "Admin", "Phnom Penh", "03334444", "👤"));
+                          "Admin", "Phnom Penh", "03334444", "https://cdn-icons-png.flaticon.com/512/149/149071.png"));
         users.add(new User("John", "Doe", "john.doe@gmail.com", "password123", 
-                          "Manager", "Phnom Penh", "012345678", "👤"));
+                          "Manager", "Phnom Penh", "012345678", "https://cdn-icons-png.flaticon.com/512/149/149071.png"));
         users.add(new User("Jane", "Smith", "jane.smith@gmail.com", "password123", 
-                          "Customer", "Siem Reap", "098765432", "👤"));
+                          "Customer", "Siem Reap", "098765432", "https://cdn-icons-png.flaticon.com/512/149/149071.png"));
         users.add(new User("Bob", "Johnson", "bob.j@gmail.com", "password123", 
-                          "Customer", "Battambang", "011223344", "👤"));
+                          "Customer", "Battambang", "011223344", "https://cdn-icons-png.flaticon.com/512/149/149071.png"));
         users.add(new User("Alice", "Williams", "alice.w@gmail.com", "password123", 
-                          "Customer", "Phnom Penh", "099887766", "👤"));
+                          "Customer", "Phnom Penh", "099887766", "https://cdn-icons-png.flaticon.com/512/149/149071.png"));
 
         // Add sample categories
         categories.add(new Category("Electronics", "Electronic devices and accessories", "💻"));
@@ -76,7 +79,8 @@ public class DataStore {
     }
 
     // User methods
-    public ArrayList<User> getUsers() { return users; }
+    public List<User> getUsers() { return new ArrayList<>(users); }
+    public ObservableList<User> getUsersObservable() { return users; }
     public void addUser(User user) { users.add(user); }
     public void deleteUser(User user) { users.remove(user); }
     public User getUserById(int id) {
@@ -87,7 +91,8 @@ public class DataStore {
     }
 
     // Category methods
-    public ArrayList<Category> getCategories() { return categories; }
+    public List<Category> getCategories() { return new ArrayList<>(categories); }
+    public ObservableList<Category> getCategoriesObservable() { return categories; }
     public void addCategory(Category category) { categories.add(category); }
     public void deleteCategory(Category category) { categories.remove(category); }
     public Category getCategoryById(int id) {
@@ -98,7 +103,8 @@ public class DataStore {
     }
 
     // Product methods
-    public ArrayList<Product> getProducts() { return products; }
+    public List<Product> getProducts() { return new ArrayList<>(products); }
+    public ObservableList<Product> getProductsObservable() { return products; }
     public void addProduct(Product product) { products.add(product); }
     public void deleteProduct(Product product) { products.remove(product); }
     public Product getProductById(int id) {
@@ -109,7 +115,8 @@ public class DataStore {
     }
 
     // Cart methods
-    public ArrayList<Cart> getCarts() { return carts; }
+    public List<Cart> getCarts() { return new ArrayList<>(carts); }
+    public ObservableList<Cart> getCartsObservable() { return carts; }
     public void addCart(Cart cart) { carts.add(cart); }
     public void deleteCart(Cart cart) { carts.remove(cart); }
     public Cart getCartById(int id) {
@@ -120,7 +127,8 @@ public class DataStore {
     }
 
     // CartItem methods
-    public ArrayList<CartItem> getCartItems() { return cartItems; }
+    public List<CartItem> getCartItems() { return new ArrayList<>(cartItems); }
+    public ObservableList<CartItem> getCartItemsObservable() { return cartItems; }
     public void addCartItem(CartItem cartItem) { 
         cartItems.add(cartItem);
         updateCartTotalPrice(cartItem.getCartId());
@@ -129,8 +137,8 @@ public class DataStore {
         cartItems.remove(cartItem);
         updateCartTotalPrice(cartItem.getCartId());
     }
-    public ArrayList<CartItem> getCartItemsByCartId(int cartId) {
-        ArrayList<CartItem> items = new ArrayList<>();
+    public List<CartItem> getCartItemsByCartId(int cartId) {
+        List<CartItem> items = new ArrayList<>();
         for (CartItem item : cartItems) {
             if (item.getCartId() == cartId) {
                 items.add(item);
@@ -147,6 +155,11 @@ public class DataStore {
                 total += item.getTotal();
             }
             cart.setTotalPrice(total);
+            // Trigger ObservableList update by removing and re-adding
+            int index = carts.indexOf(cart);
+            if (index >= 0) {
+                carts.set(index, cart);
+            }
         }
     }
 }

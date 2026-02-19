@@ -1,18 +1,33 @@
 package com.adminpanel.auth;
 
-import com.adminpanel.store.DataStore;
 import com.adminpanel.model.User;
+import com.adminpanel.store.DataStore;
 import com.adminpanel.util.ApplicationState;
 
 import javafx.application.Application;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
-import javafx.scene.control.*;
-import javafx.scene.layout.*;
+import javafx.scene.control.Alert;
+import javafx.scene.control.Button;
+import javafx.scene.control.ButtonBar;
+import javafx.scene.control.ButtonType;
+import javafx.scene.control.Dialog;
+import javafx.scene.control.Label;
+import javafx.scene.control.PasswordField;
+import javafx.scene.control.TextField;
+import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.GridPane;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.VBox;
+import javafx.scene.layout.Priority;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
+import javafx.stage.FileChooser;
 import javafx.stage.Stage;
+import java.io.File;
 
 public class LoginApp extends Application {
 
@@ -26,42 +41,70 @@ public class LoginApp extends Application {
     public void start(Stage primaryStage) {
         dataStore = DataStore.getInstance();
 
-        primaryStage.setTitle("Login / Register");
+        primaryStage.setTitle("E-Commerce Login");
+        primaryStage.setMinWidth(600);
+        primaryStage.setMinHeight(500);
 
-        Label title = new Label("Welcome — Please sign in or register");
-        title.setFont(Font.font("Arial", FontWeight.BOLD, 24));
+        Label title = new Label("Welcome Back");
+        title.setFont(Font.font("Arial", FontWeight.BOLD, 32));
+        title.setStyle("-fx-text-fill: #2c3e50;");
+
+        Label subtitle = new Label("Please sign in to continue");
+        subtitle.setFont(Font.font("Arial", 14));
+        subtitle.setStyle("-fx-text-fill: #7f8c8d;");
 
         TextField emailField = new TextField();
-        emailField.setPromptText("Email");
-        emailField.setPrefWidth(350);
-        emailField.setStyle("-fx-padding: 12; -fx-font-size: 14;");
+        emailField.setPromptText("Enter your email");
+        emailField.setPrefWidth(400);
+        emailField.setStyle("-fx-padding: 15; -fx-font-size: 14; -fx-background-radius: 8; " +
+                "-fx-border-color: #e0e0e0; -fx-border-radius: 8; -fx-border-width: 1;");
 
         PasswordField passwordField = new PasswordField();
-        passwordField.setPromptText("Password");
-        passwordField.setPrefWidth(350);
-        passwordField.setStyle("-fx-padding: 12; -fx-font-size: 14;");
+        passwordField.setPromptText("Enter your password");
+        passwordField.setPrefWidth(400);
+        passwordField.setStyle("-fx-padding: 15; -fx-font-size: 14; -fx-background-radius: 8; " +
+                "-fx-border-color: #e0e0e0; -fx-border-radius: 8; -fx-border-width: 1;");
 
-        Button loginBtn = new Button("Login");
-        loginBtn.setPrefWidth(150);
-        loginBtn.setFont(Font.font("Arial", FontWeight.BOLD, 14));
-        loginBtn.setStyle("-fx-padding: 12; -fx-background-color: #4FB3E8; -fx-text-fill: white; -fx-background-radius: 8;");
+        Button loginBtn = new Button("Sign In");
+        loginBtn.setPrefWidth(190);
+        loginBtn.setPrefHeight(45);
+        loginBtn.setFont(Font.font("Arial", FontWeight.BOLD, 15));
+        loginBtn.setStyle("-fx-background-color: #3498db; -fx-text-fill: white; " +
+                "-fx-background-radius: 8; -fx-cursor: hand; -fx-effect: dropshadow(gaussian, rgba(52,152,219,0.3), 10, 0, 0, 3);");
+        loginBtn.setOnMouseEntered(e -> loginBtn.setStyle("-fx-background-color: #2980b9; -fx-text-fill: white; " +
+                "-fx-background-radius: 8; -fx-cursor: hand; -fx-effect: dropshadow(gaussian, rgba(52,152,219,0.4), 12, 0, 0, 4);"));
+        loginBtn.setOnMouseExited(e -> loginBtn.setStyle("-fx-background-color: #3498db; -fx-text-fill: white; " +
+                "-fx-background-radius: 8; -fx-cursor: hand; -fx-effect: dropshadow(gaussian, rgba(52,152,219,0.3), 10, 0, 0, 3);"));
+
+
+        // Add keyboard shortcut - Enter to login
+        passwordField.setOnAction(e -> loginBtn.fire());
         
-        Button registerBtn = new Button("Register");
-        registerBtn.setPrefWidth(150);
-        registerBtn.setFont(Font.font("Arial", FontWeight.BOLD, 14));
-        registerBtn.setStyle("-fx-padding: 12; -fx-background-color: #4CAF50; -fx-text-fill: white; -fx-background-radius: 8;");
+        Button registerBtn = new Button("Create Account");
+        registerBtn.setPrefWidth(190);
+        registerBtn.setPrefHeight(45);
+        registerBtn.setFont(Font.font("Arial", FontWeight.BOLD, 15));
+        registerBtn.setStyle("-fx-background-color: transparent; -fx-text-fill: #3498db; " +
+                "-fx-border-color: #3498db; -fx-border-width: 2; -fx-background-radius: 8; -fx-border-radius: 8; -fx-cursor: hand;");
+        registerBtn.setOnMouseEntered(e -> registerBtn.setStyle("-fx-background-color: #ecf0f1; -fx-text-fill: #3498db; " +
+                "-fx-border-color: #3498db; -fx-border-width: 2; -fx-background-radius: 8; -fx-border-radius: 8; -fx-cursor: hand;"));
+        registerBtn.setOnMouseExited(e -> registerBtn.setStyle("-fx-background-color: transparent; -fx-text-fill: #3498db; " +
+                "-fx-border-color: #3498db; -fx-border-width: 2; -fx-background-radius: 8; -fx-border-radius: 8; -fx-cursor: hand;"));
 
         HBox actions = new HBox(15, loginBtn, registerBtn);
         actions.setAlignment(Pos.CENTER);
 
-        VBox formBox = new VBox(15, title, emailField, passwordField, actions);
-        formBox.setPadding(new Insets(40));
+        VBox formBox = new VBox(20);
+        formBox.getChildren().addAll(title, subtitle, emailField, passwordField, actions);
+        formBox.setPadding(new Insets(50));
         formBox.setAlignment(Pos.CENTER);
-        formBox.setPrefWidth(500);
-        formBox.setStyle("-fx-background-color: white; -fx-border-color: #e0e0e0; -fx-border-radius: 8; -fx-background-radius: 8;");
+        formBox.setMaxWidth(550);
+        formBox.setStyle("-fx-background-color: white; -fx-background-radius: 12; " +
+                "-fx-effect: dropshadow(gaussian, rgba(0,0,0,0.15), 20, 0, 0, 5);");
 
         BorderPane root = new BorderPane(formBox);
-        root.setStyle("-fx-background-color: #f5f5f5;");
+        root.setPadding(new Insets(50));
+        root.setStyle("-fx-background-color: linear-gradient(to bottom right, #ecf0f1, #dfe6e9);");
 
         loginBtn.setOnAction(e -> {
             String email = emailField.getText().trim();
@@ -96,15 +139,16 @@ public class LoginApp extends Application {
                     new com.adminpanel.ui.ClientApp().start(primaryStage);
                 }
             } catch (Exception ex) {
-                ex.printStackTrace();
+                System.err.println("Launch Error: " + ex.getMessage());
                 showAlert(Alert.AlertType.ERROR, "Launch Error", "Cannot open application window");
             }
         });
 
         registerBtn.setOnAction(e -> showRegisterDialog());
 
-        Scene scene = new Scene(root, 1200, 700);
+        Scene scene = new Scene(root, 800, 650);
         primaryStage.setScene(scene);
+        primaryStage.centerOnScreen();
         primaryStage.show();
     }
 
@@ -119,6 +163,7 @@ public class LoginApp extends Application {
         grid.setPadding(new Insets(30));
         grid.setPrefWidth(500);
 
+
         TextField firstName = new TextField();
         firstName.setPromptText("First name");
         firstName.setStyle("-fx-padding: 10;");
@@ -131,17 +176,37 @@ public class LoginApp extends Application {
         PasswordField password = new PasswordField();
         password.setPromptText("Password");
         password.setStyle("-fx-padding: 10;");
-        TextField position = new TextField();
-        position.setPromptText("Position (Admin/Customer)");
-        position.setStyle("-fx-padding: 10;");
         TextField address = new TextField();
         address.setPromptText("Address");
         address.setStyle("-fx-padding: 10;");
         TextField phone = new TextField();
         phone.setPromptText("Phone");
         phone.setStyle("-fx-padding: 10;");
-        TextField image = new TextField("👤");
-        image.setStyle("-fx-padding: 10;");
+        
+        // Hidden field to store the image URL
+        TextField imageField = new TextField();
+        
+        ImageView preview = new ImageView();
+        preview.setFitHeight(60);
+        preview.setFitWidth(60);
+        preview.setPreserveRatio(true);
+        try { preview.setImage(new Image("https://cdn-icons-png.flaticon.com/512/149/149071.png")); } catch (Exception ignored) {}
+        
+        Button browseBtn = new Button("Upload Photo");
+        browseBtn.setOnAction(e -> {
+            FileChooser fileChooser = new FileChooser();
+            fileChooser.setTitle("Select Profile Image");
+            fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("Image Files", "*.png", "*.jpg", "*.jpeg"));
+            File file = fileChooser.showOpenDialog(null);
+            if (file != null) {
+                String uri = file.toURI().toString();
+                imageField.setText(uri);
+                try { preview.setImage(new Image(uri)); } catch (Exception ex) {}
+            }
+        });
+        
+        HBox imageBox = new HBox(15, browseBtn, preview);
+        imageBox.setAlignment(Pos.CENTER_LEFT);
 
         grid.add(new Label("First name:"), 0, 0);
         grid.add(firstName, 1, 0);
@@ -151,14 +216,12 @@ public class LoginApp extends Application {
         grid.add(email, 1, 2);
         grid.add(new Label("Password:"), 0, 3);
         grid.add(password, 1, 3);
-        grid.add(new Label("Position:"), 0, 4);
-        grid.add(position, 1, 4);
-        grid.add(new Label("Address:"), 0, 5);
-        grid.add(address, 1, 5);
-        grid.add(new Label("Phone:"), 0, 6);
-        grid.add(phone, 1, 6);
-        grid.add(new Label("Image:"), 0, 7);
-        grid.add(image, 1, 7);
+        grid.add(new Label("Address:"), 0, 4);
+        grid.add(address, 1, 4);
+        grid.add(new Label("Phone:"), 0, 5);
+        grid.add(phone, 1, 5);
+        grid.add(new Label("Image:"), 0, 6);
+        grid.add(imageBox, 1, 6);
 
         dialog.getDialogPane().setContent(grid);
         ButtonType createBtn = new ButtonType("Create Account", ButtonBar.ButtonData.OK_DONE);
@@ -166,9 +229,13 @@ public class LoginApp extends Application {
 
         dialog.setResultConverter(bt -> {
             if (bt == createBtn) {
+                String imageUrl = imageField.getText().trim();
+                if (imageUrl.isEmpty()) {
+                    imageUrl = "https://cdn-icons-png.flaticon.com/512/149/149071.png";
+                }
                 return new User(firstName.getText().trim(), lastName.getText().trim(),
-                        email.getText().trim(), password.getText(),
-                        position.getText().trim(), address.getText().trim(), phone.getText().trim(), image.getText().trim());
+                    email.getText().trim(), password.getText(),
+                    "Customer", address.getText().trim(), phone.getText().trim(), imageUrl);
             }
             return null;
         });

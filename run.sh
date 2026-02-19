@@ -1,15 +1,25 @@
 #!/bin/bash
 
-# Compile all Java files
-echo "Compiling Java files..."
-javac -d bin src/main/java/com/adminpanel/*.java
+echo "========================================"
+echo "JavaFX Admin Panel Application"
+echo "========================================"
+echo ""
+echo "Starting application..."
+echo ""
 
-# Check if compilation was successful
-if [ $? -eq 0 ]; then
-    echo "Compilation successful!"
-    echo "Running the application..."
-    java -cp bin com.adminpanel.DashboardApp
-else
-    echo "Compilation failed!"
+# Use Maven to run the application
+mvn clean javafx:run
+
+if [ $? -ne 0 ]; then
+    echo ""
+    echo "========================================"
+    echo "Error: Failed to start application"
+    echo "========================================"
+    echo ""
+    echo "Please make sure:"
+    echo "1. Maven is installed and in PATH"
+    echo "2. Java JDK 11 or higher is installed"
+    echo "3. You are in the correct directory"
+    echo ""
     exit 1
 fi
